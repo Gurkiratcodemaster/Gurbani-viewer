@@ -4,7 +4,6 @@ import path from "path";
 import type { NextRequest } from "next/server";
 import { parse } from "cookie";
 
-// Cache the JSON data to avoid reading file on every request
 let cachedData: any[] | null = null;
 
 function loadAngData() {
@@ -36,6 +35,11 @@ export async function GET(
   try {
     const angData = loadAngData();
     const pageId = parseInt(id, 10);
+    
+    if (!angData) {
+      return NextResponse.json({ error: "Failed to load ang data" }, { status: 500 });
+    }
+    
     const pageData = angData.find(page => page.pageId === pageId);
 
     if (!pageData) {
